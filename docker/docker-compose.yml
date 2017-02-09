@@ -1,0 +1,31 @@
+version: '2.1'
+services:
+  hello-service-1:
+    build:
+      service/
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4567"]
+      interval: 1m30s
+      timeout: 10s
+      retries: 3
+  hello-service-2:
+      build:
+        service/
+      healthcheck:
+        test: ["CMD", "curl", "-f", "http://localhost:4567"]
+        interval: 1m30s
+        timeout: 10s
+        retries: 3
+  hello-service-load-balancer:
+    build:
+      loadbalancer/
+    ports:
+      - "127.0.0.1:80:80"
+    depends_on:
+      - hello-service-1
+      - hello-service-2
+
+networks:
+  default:
+    external:
+      name: hello-network
